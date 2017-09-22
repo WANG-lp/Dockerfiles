@@ -1,0 +1,15 @@
+FROM fedora:latest
+MAINTAINER William WANG <lazydomino@gmail.com>
+
+RUN echo "fastestmirror=1" >> /etc/dnf/dnf.conf && dnf update -y && dnf install -y wget perl perl-Getopt-Long perl-Digest-MD5 && dnf clean all
+RUN mkdir -p /root/tl && curl -L http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz -o /root/tl.tar.gz && tar xzf /root/tl.tar.gz -C /root/tl --strip=1 && rm -f /root/tl.tar.gz
+WORKDIR /root/tl
+RUN echo "I" | ./install-tl
+ENV PATH="/usr/local/texlive/2017/bin/x86_64-linux:${PATH}"
+
+VOLUME ["/workdir"]
+
+ENTRYPOINT ["pdflatex"]
+
+LABEL io.whalebrew.name pdflatex
+LABEL io.whalebrew.config.working_dir '/workdir'
